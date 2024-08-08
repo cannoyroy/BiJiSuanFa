@@ -12,4 +12,5 @@
 
 ### 2.1.2 变量类型
 
-![image-20240808231117625](/Users/xiaojiayudeapple/Desktop/TECH/github/BiJiSuanFa/NOTE.assets/image-20240808231117625.png)
+![image-20240808231117625](./NOTE.assets/image-20240808231117625.png)
+
