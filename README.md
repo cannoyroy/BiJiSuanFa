@@ -2,9 +2,9 @@
 
 算法笔记——机械工业出版社
 
+电子书PDF链接：链接: https://pan.baidu.com/s/1QlU2EL2T7d7Ust_VTAj1_g?pwd=jky9 提取码: jky9 
 
-
-文件夹里会有细化的题单、HINT、SOLUTION
+文件夹里会有细化的题单、题目、解析
 
 书中没有的但我觉得的好题也会丢进去。
 
