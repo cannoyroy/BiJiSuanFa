@@ -401,7 +401,8 @@ void quickSort(int A[], int left, int right){
 
 需注意，rand()函数只能产生 $[0, RAND-MAX]$ 范围内的整数，为了避免 $[a,b]$ 超出范围的情况，可以采用： 
 $round (1. 0*rand () /RAND-MAX* (right - left) + left)$ 
-$round(rand() / RAND-MAX$
+
+$round(1.0*rand() / RAND-MAX *(right-left)+left$
 
 ### 4.7 其他高效技巧与算法
 
