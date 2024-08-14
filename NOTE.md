@@ -399,7 +399,7 @@ void quickSort(int A[], int left, int right){
 
 快速排序算法当序列中元素的排列比较随机市销率最高，但是序列元素接近有序时，会达到最坏时间复杂度 $O(n^2)$，导致原因主要是主元无法把当前区间划分为两个长度接近的子区间。结局方案是随机选择主元。
 
-需注意，rand()函数只能产生 $[0, RAND \_ MAX]$ 范围内的整数，为了避免 $[a,b]$ 超出范围的情况，可以采用： $round (1. 0*rand () /RAND\_MAX* (right - left) + left)$ 
+需注意，rand()函数只能产生 $[0, RAND \__ \  MAX]$ 范围内的整数，为了避免 $[a,b]$ 超出范围的情况，可以采用： $round(1.0*rand()/RAND\_MAX*(right-left)+left)$ 。
 
 ### 4.7 其他高效技巧与算法
 
