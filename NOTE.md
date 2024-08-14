@@ -269,9 +269,190 @@ for(int i = 2; i <= n; i++){
 
 给出N个开区间(x, y)，从中选择尽可能多的开区间，使得这些开区间两两没有交集。
 
+### 4.5 二分
+
+#### 4.5.1 二分查找
+
+原理不提。注意：`mid = (left + right) / 2`可能会发生超过`int`而导致溢出，此处可以使用`mid = left + (right - left)/2`。
+
+#### 4.5.2 二分法拓展
+
+除了整数情况下的二分查询问题，当`right - left < 1e-5`时满足精度要求。一般用`eps`表示精度。
+
+#### 4.5.3 快速幂
+
+##### 1. 递归写法
+
+$给定三个正整数a、b、m\ (a < 10^9, b<10^{18}, 1<m< {10}^9)，求\ a^b \%m$ 
+
+1. 如果$b$是奇数，那么有 $a^b=a*a^{b-1}$
+2. 如果$b$是偶数，那么有 $a^b=a^{b/2}*a^{b/2}$
+
+```c++
+typedef long long int ll;
+
+LL binaryPow(LL a, LL b, LL m){
+    if(!b)  return 1;
+    if(b & 1)   return a * binaryPow(a, b - 1, m) % m;
+    else{
+        LL mul = binaryPow(a, b / 2, m);
+        return mul * mul % m;
+    }
+}
+```
+
+细节注意：如果初始a大于等于m，那么需要在进入函数前让a对m去模。
+
+##### 2. 迭代写法
+
+对于$a^b$来说，b可以写成若干二次幂之和。 $a^b表示为a^{2k}……a^8a^4a^2a^1$ 中若干项的乘积。
+
+```c++
+typedef long long int LL;
+
+LL binaryPow(LL a, LL b, LL m){
+	LL ans = 1;
+	while(b > 0){
+		if(b & 1){
+			ans = ans * a % m;
+		}
+		a = a * a % m;
+		b >>= 1;
+	}
+	return ans;
+}
+```
+
+### 4.6 two points
+
+#### 4.6.1 什么是 two points
+
+给定一个递增的正整数数列序列和一个正整数M，求序列中的两个不同位置的数a和b，使得它们的和恰好为M。
+
+```c++
+while(i < j){
+	if(a[i] + a[j] == m){
+		printf("%d %d\n", i, j);
+		i++;
+		j--;
+	}else if(a[i] + a[j] < m){
+		i++;
+	}else{
+		j--;
+	}
+}
+```
+
+#### 4.6.2 归并排序
+
+2-路归并排序。2-路归并持序的原理是，将序列两分组，将序列归并为 $\lceil \frac{n}{2} \rceil$ 个组，组内单独排序；然后 将这些组再两两归并，生成 $\lceil \frac{n}{4} \rceil$ 个组，组内再单独排序；以此类推，直到只剩下一个组为止。
+
+##### 1. 递归实现
+
+……
+
+##### 2. 非递归实现
+
+```c++
+void mergeSort(int A[]){
+	// step 为组内元素个数，step / 2为左子区间元素个数，等号可以不取
+	for(int step = 2; step / 2 <= n; step *= 2){
+		// 每step个元素为一组，组内前step/2和后step/2个元素合并
+		for(int i = 1; i <= n; i+= step){
+			int mid = i + step / 2 - 1;
+			if(mid + 1 <= n){ // 存在右子区间则合并
+				merge(A, i, mid, mid+1, min(i + step - 1, n));
+			}
+		}
+	}
+}
+```
+
+#### 4.6.3 快速排序
+
+对于序列 $A[1],A[2]……A[n]$ ，调整序列中元素的位置，使得 $A[i]$ 的左侧所有元素都不超过 $A[i]$ ，$A[i]$ 右侧的所有元素都大于 $A[i]$ 。
+
+这里采用速度较快的tow points思想。
+
+```c++
+void Partition(int A[], int left, int right){
+	int temp = A[left];
+	while(left < right){
+		while(left < right && A[right] > temp)	right--;
+        // 反复左移，找到不符合条件的元素
+		A[left] = A[right];
+		while(left < right $$ A[left] <= temp)	left++;
+		A[right] = A[left];
+	}
+	A[left] = temp;
+	return left;
+}
+
+void quickSort(int A[], int left, int right){
+    int(left < right){
+        int pos = Partition(A, left, right);
+        quickSort(A, left, pos - 1);
+        quickSort(A, pos + 1, right);
+    }
+}
+```
+
+快速排序算法当序列中元素的排列比较随机市销率最高，但是序列元素接近有序时，会达到最坏时间复杂度 $O(n^2)$，导致原因主要是主元无法把当前区间划分为两个长度接近的子区间。结局方案是随机选择主元。
+
+需注意，rand()函数只能产生 $[0, RAND\_MAX]$ 范围内的整数，为了避免 $[a,b]$ 超出范围的情况，可以采用： $round (1. 0*rand () /RAND\_MAX* (right - left) + left)$
+
+### 4.7 其他高效技巧与算法
+
+#### 4.7.1 打表
+
+用空间换时间，将所有可能需要用到的结果事先计算出来，这样后面需要的时候直接查表获得。
+
+1. 在程序中一次性计算出所有需要用到的结果，之后的查询直接取这些结果。
+2. 在程序B中分一次或者多次计算出所有需要用到的结果，手工把结果写在程序A的数组中，然后在程序A中就可以直接使用这些结果。
+3. 一些感觉不会做的题，先用暴力程序计算小范围数据的结果，然后找规律。
+
+#### 4.7.2 活用递推
+
+有很多题目需要细心考虑过程中是否可能存在递推关系，如果能找到这样的递推关系，就能使时间复杂度下降不少。例如就一类涉及序列的题 目来说，假如序列的每一位所需要计算的值都可以通过该位左右两侧的结果计算得到，那么就可以考虑所谓的“ 左右两侧的结果” 是否能通过递推进行预处理来得到，这样在后面的使用中就可以不必反复求解。
+
+#### 4.7.3 随机选择算法
+
+从一个无序的数组中求出第K大的数。相比排序，可以使用随机选择算法，可以对任何输入达到 $O(n)$ 期望时间复杂度。
+
+```c++
+// 从A[left, right]返回第K大的数
+int randSelect(int A[], int left, int right, int K){
+    if(left == right)	return A[left];
+    int p = randPartition(A, left, right);
+    int M = p - left + 1; // 第M大
+    if(k == M)	return A[p];
+    if(K < M){
+        return randSelect(A, left, p - 1, K); // 往左侧找
+    }else{
+        return randSelect(A, p + 1, right, K - M);
+    }
+}
+```
+
 ## 第五章 入门篇（3）——数学问题
 
 ## 第六章 STL
+
+——Standard Template Library
+
+### 6.1 vector的常见用法详解
+
+vector，理解为 “长度可自动改变的数组”，可以用来以邻接表的方式存储图。
+
+#### 1. vector定义
+
+`vector<typename> name;` 如果`typename`也是一个STL容器，那么需要在`>>`符号间加上空格，因为C++11之前的标准编译器会把它视为移位操作，导致编译错误。
+
+#### 2. vector容器内元素的访问
+
+##### （1）下标访问
+
+##### （2）迭代器访问
 
 ## 第七章 提高篇（1）——数据结构专题（1）
 
@@ -286,3 +467,4 @@ for(int i = 2; i <= n; i++){
 ## 第十二章 提高篇（6）——字符串专题
 
 ## 第十三章 专题扩展
+
