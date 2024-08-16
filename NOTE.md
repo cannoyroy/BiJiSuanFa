@@ -569,20 +569,216 @@ for(set<int>::iterator it = st.begin(); it != st.end(); it++){
 
     `str.replace(it1, it2, str2)`把str的迭代器[it1, it2)范围的子串替换为str2
 
-    
-
-
 ### 6.4 map的常见用法详解
+
+map翻译为映射，将任何基本类型映射到任何基本类型（包括STL容器）
+
+#### 1. map的定义
+
+`map<typrname1, typename2> mp;`
+
+#### 2. map容器内元素访问
+
+##### （1）下标访问
+
+直接访问 `vi[index]` 即可
+
+##### （2）迭代器访问
+
+`map<typename1, typename2>::itertator it;`用`it->first`和`it->second`来访问值。同时map会以键从小到大的顺序自动排序
+
+#### 3. map常用函数实例
+
+1. find()：—— $O(logN)$ `find(key)`返回键为key的映射的迭代器
+
+2. erase()
+
+   `erase(it)` it为需要删除元素的迭代器或者欲删除的映射的键 —— $O(1)$ 
+
+   `erase(first, last)`迭代器[first, last)
+
+3. size()—— $O(1)$ 
+
+4. clear()—— $O(N)$ 
+
+#### 4. map常见用途
+
+如果要用到一个键对应多个值，只能用multimap。另外，C++11还增加了unordered_map用散列代替map内部的红黑树实现，使其不按key排序。
 
 ### 6.5 queue的常见用法详解
 
-### 6.6 priority的常见用法详解
+queue翻译成队列，是个先进先出的容器
+
+#### 1. queue的定义
+
+`queue<typename> name;`
+
+#### 2. queue容器内元素访问
+
+`front()`访问队首元素，`back()`访问队尾元素
+
+#### 3. queue常用函数实例解析
+
+1. push()—— $O(1)$ 
+2. front() back()—— $O(1)$ 
+3. pop()—— $O(1)$ 
+4. empty()—— $O(1)$ 
+5. size()—— $O(1)$ 
+
+#### 4. queue的常见用途
+
+使用front()和pop()前，必须用empty()判断队列是否为空
+
+双端队列：deque 首尾皆可插入和删除
+
+优先队列：priority_queue 使用堆实现的默认将队列最大元素置于队首的容器
+
+### 6.6 priority_queue的常见用法详解
+
+priority_queue又称优先队列，底层用堆实现，队首元素是当前队列中优先级最高的。
+
+#### 1. priority_queue定义
+
+`priority_queue<typename> name;`
+
+#### 2. priority_queue元素访问
+
+只能通过`top()`访问队首元素（或称堆顶元素）
+
+#### 3. priorit_queue常用函数实例解析
+
+1. push()：—— $O(logN)$
+2. top()：—— $O(1)$
+3. pop()：—— $O(logN)$
+4. empty()：—— $O(1)$
+5. size()：—— $O(1)$
+
+#### 4. priority_queue内元素优先级的设置
+
+##### （1）基本数据类型的优先级谁
+
+`priority_queue<int, vector<int>, less<int>(greater<int>) >` 第二个参数表示称在底层数据结构堆堆容器，第三个参数是对第一个参数的比较类：less是数字大的优先级大，greater反之
+
+##### （2）结构体的优先级设置
+
+重载（overload）：对已有的运算符进行重新定义
+
+```c++
+struct fruit{
+    string name;
+    int price;
+    friend bool operator < (fruit f1, fruit f2){
+        return f1.price < f2.price;
+    }
+};
+```
+
+`friend`为友元。重载大于号会编译错误，因为数学上讲，`f1>f2`=`f2<f1`，`f1==f2`=`!(f1<f2)&&!(f2<f2)`
+
+```c++
+struct cmp{
+    bool operator() (fruit f1, fruit f2){
+        return f1.price > f2.pricel
+    }
+};
+
+priority_queue<fruit, vector<fruit>, cmp> q;
+```
+
+若结构体那数据较庞大，比如出现字符串或者数组，可以使用引用（const和&）提高效率
+
+```c++
+struct fruit{
+    string name;
+    int price;
+    friend bool operator < (const fruit &f1, const fruit &f2){
+        return f1.price < f2.price;
+    }
+};
+struct cmp{
+    bool operator() (const fruit &f1, const fruit &f2){
+        return f1.price > f2.pricel
+    }
+};
+```
+
+#### 5. priority_queue的常见用途
+
+可以解决些贪心问题，对Dijkstra算法进行优化（因为优先队列的本质是堆）
+
+注意，使用top()前，必须用empty()判断是否为空
 
 ### 6.7 stack的常见用法详解
 
+stack翻译为栈，是一个后进先出的容器
+
+#### 1. stack的定义
+
+`stack<typename> name;`
+
+#### 2. stack容器内元素的访问
+
+只能通过`top()`来访问栈顶元素
+
+#### 3. stack常用函数实例解析
+
+1. push()：—— $O(1)$ 
+2. top()：—— $O(1)$ 
+3. pop()：—— $O(1)$ 
+4. empty()：—— $O(1)$ 
+5. size()：—— $O(1)$ 
+
+#### 4. stack常见用途
+
+模拟递归
+
 ### 6.8 pair的常见用法详解
 
+可以看作内部有两个元素的结构体
+
+#### 1. pair的定义
+
+`pair<typename1, typename2> name(key1, key2);`
+
+`pair<typename1, typename2>(key1, key2); make_pair(key1, key2)`
+
+#### 2. pair中元素的访问
+
+正常结构体去访问 first和second
+
+#### 3. pair常用函数实例解析
+
+比较操作数：先以first的大小为标准，再去比较second
+
+#### 4. pair的常见用途
+
+1. 用来代替二元结构体及其构造函数，节省编码时间
+2. 作为map的键值对来进行插入
+
 ### 6.9 algorithm 头文件下的常用函数
+
+abs()
+
+fabs()
+
+swap()
+
+reverse(it, it2)：数组容器/迭代器 在[it, it2)范围内进行元素反转
+
+next_premutation()：给出一个序列在全排列中的下一个序列，要是已经达到了全排列的最后一个会返回false
+
+fill()：可以把数组或容器中的某一段区间赋予某个相同的值，和memset不同，这里的肤质是数组类型对应范围中的任意值
+
+sort()：sort(首元素地址，尾元素地址的下一个地址，比较函数);
+
+```c++
+bool cmp(node a, node b){
+    return a.x > b.x;
+}
+sort(a.begin(), a.end(), cmp); // 容器排序
+```
+
+lower_bound() / upper_bound()：(first, last, val) 前者用来寻找数组/容器范围内[first, last)范围内第一个值大于等于val的元素的位置，数组则返回指针，容器则返回迭代器。厚着用来找严格大于。若是没有，则返回可以插入该元素的位置。
 
 ## 第七章 提高篇（1）——数据结构专题（1）
 
