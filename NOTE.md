@@ -1,5 +1,7 @@
 # NOTE
 
+[TOC]
+
 ## 第二章 C/C++快速入门
 
 ​	注意:有些读者认为学过C++之后就没有必要学C 语言，甚至觉得C语言太麻烦而不学，这是不太正确的。因为就机考使用的语法而言，除了输入和输出部分，其余顺序结构、分支结构、循环结构、数组、指针都是几乎一样的，学习C语言并不会带来什么负担。对于让C+ 使用者觉得麻烦的scanf函数和printf函数，虽然必须承认cin和cout 可以不指定输入输出格式比较方便，但是cin和cout 消耗的时间比scanf 和printf 多得多，很多题目可能输入还没结束就超时了。
@@ -781,6 +783,172 @@ sort(a.begin(), a.end(), cmp); // 容器排序
 lower_bound() / upper_bound()：(first, last, val) 前者用来寻找数组/容器范围内[first, last)范围内第一个值大于等于val的元素的位置，数组则返回指针，容器则返回迭代器。厚着用来找严格大于。若是没有，则返回可以插入该元素的位置。
 
 ## 第七章 提高篇（1）——数据结构专题（1）
+
+### 7.1 栈的应用
+
+当用数组实现栈时，栈顶指针是一个int型的变量；用链表实现时，则是一个int*型的指针。
+
+```c++
+// 清空(clear)
+void clear(){
+	TOP = -1;
+}
+// 获取栈内元素个数(size)
+void size(){
+    return TOP + 1;
+}
+// 判空(empty)
+void empty(){
+    if(TOP == -1)	return true;
+    return false;
+}
+// 进栈(push)
+void push(int x){
+    st[++TOP] = x;
+}
+// 出栈(pop)
+void pop(){
+    TOP--;
+}
+// 取栈顶元素(top)
+int top(){
+    return st[TOP];
+}
+```
+
+### 7.2 队列的应用
+
+### 7.3 链表处理
+
+#### 7.3.1 链表的概念
+
+线性表分为顺序表和链表，顺序表可以简单理解为数组。
+
+正常方式定义数组时，计算机会从内存中取出一块连续的地址来存放给定长度的数组，而链表是由若干结点组成（每个结点代表一个元素），而结点在内存中的存储位置通常不连续。
+
+链表的结点一般由两部分构成，数据域和指针域
+
+```c++
+struct node{
+    typename data;
+    node* next;
+};
+```
+
+指针域指向下一个结点的地址，最后一个结点的NEXT指向NULL，即空地址。
+
+链表又分为：带头结点的链表和不带头结点的链表（以下为带头结点的写法）。
+
+#### 7.3.2 使用malloc函数或new运算符为链表接电分配内存空间
+
+##### 1. malloc——C语言
+
+用于申请动态内存，返回类型是申请同变量类型的指针。
+
+`typename* p = (typename*)malloc(sizeof(typename));`
+
+以申请一个int型变量和一个node型结构体变量为例：
+
+```c++
+int* p = (int*)malloc(sizeof(int));
+node* p = (node*)malloc(sizeof(node));
+```
+
+这个写法的逻辑是，以需要申请的内存空间大小（即sizeof(node)）为malloc函数的参数，这样malloc函数会向内存申请一块大小为sizeof(node)的空间，并且返回指向这块空间的指针，但是这个指针是未确定类型的指针void*，因此需要强行转化，加上(node * )。
+
+如果申请失败，会返回NULL。失败通常发生在申请了较大的动态数组。
+
+##### 2. new运算符——C++
+
+`typename* p = new typename;`
+
+如果申请失败，会启动C++异常机制处理而不是返回空指针NULL，失败原因同理。
+
+##### 3. 内存泄漏
+
+指的是malloc和new开辟出来的内存空间在使用过后没有释放，导致在程序结束之前始终占用该内存空间，在一些较大程序中容易导致内存消耗过快而最后无内存分配。
+
+（1）free函数——malloc
+
+`free p`需要释放的内存空间的指针变量，且把指针p指向空地址NULL
+
+（2）delete运算符——new
+
+`delete(p);`
+
+#### 7.3.3 链表的基本操作
+
+##### 1. 创建链表
+
+把每个结点的next指针指向下一个结点
+
+```c++
+struct node{
+    int data;
+    node* next;
+};
+
+node* create(int Array[]){
+    node *p, *pre, *head; // pre保存前驱结点，head为头结点
+    head = new node;
+    head->next = NULL;
+    pre = head;
+    for(int i = 0; i < 5; i++){
+        p = new node;
+        p->data = Array[i];
+        p->next = NULL;
+        pre->next = p;
+        pre = p;
+    }
+    return hed;
+}
+int main(){
+    int Array[5] = {5, 3, 6, 1, 2};
+    node* L = creat(Array);
+    L = L -> next;
+    // ……
+}
+```
+
+##### 2. 查找元素
+
+```c++
+int search(node* head, int x){
+    int count = 0;
+    node* p = head->next;
+    while(p != NULL){
+        if(p -> data == x){
+            count++;
+        }
+        p = p -> next;
+    }
+}
+```
+
+##### 3. 插入元素
+
+元素i-1所在next指针指向x，x的next指针指向i
+
+##### 4. 删除元素
+
+令pre所指结点的指针域next指向p结点的下一个结点
+
+释放p结点的内存空尽啊
+
+令p结点指向pre指向的结点
+
+#### 7.3.4 静态指针
+
+原理是hash，建立一个接否提数组，下标表示地址，且不需要头结点。
+
+```c++
+struct Node{
+    typename data; // 数据域
+    int next; // 指针域
+}node[size];
+```
+
+
 
 ## 第八章 提高篇（2）——搜索专题
 
